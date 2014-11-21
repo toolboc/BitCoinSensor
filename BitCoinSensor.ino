@@ -76,67 +76,71 @@ void setup() {
  
 }
 
+float currentNumericRate = 0;
 float lastNumericRate = 0;
-float lastIntervalRateSample = 0;
-float lastIntervalRateSampleTime = 0;
-float currentTime = 0;
-int intervalInSeconds = 600;
-float volatilityThreshold = .10;
-float intervalRatio = 1;
+float accumulator = 0;
+//The closer alpha is to 1.0, the faster the moving average updates in response to new values
+float alpha = .2;
+float volatilityIndex = 0;
+//defined as ratio of Moving average (accumulator) / currentNumericRate
+float volatilityAlertThreshold = .10;
 
 void loop() {
 
-lcd.clear();  
+  lcd.setCursor(0,0);
+  lcd.clear();  
+    
+  //Get BTC Price  
+  char* result = makeWebRequest();
   
-//Get BTC Price  
-char* result = makeWebRequest();
-
-//Begin Parsing
-char* rateBegin = strstr(result, "\"rate\"");
-char* rate = parseJson(rateBegin);
-float currentNumericRate = atof(rate);
-
-//Print Output
-lcd.print(currentNumericRate);
-lcd.print(" ");
-lcd.print(intervalRatio - 1.0f);
-lcd.print("%");
-
-//Begin Processing
-if(lastNumericRate == 0)
-  lastNumericRate = currentNumericRate;
-
-if(lastIntervalRateSample == 0)
-{
-    lastIntervalRateSample = currentNumericRate;
-    lastIntervalRateSampleTime = time(0);
-}
-
-//Begin Crash || "To the Moon" detection  
-currentTime = time(0);
-if(currentTime > lastIntervalRateSampleTime + intervalInSeconds)
-{
-  intervalRatio = (float)lastIntervalRateSample / currentNumericRate;
+  //Begin Parsing
+  char* rateBegin = strstr(result, "\"rate\"");
+  char* rate = parseJson(rateBegin);
+  currentNumericRate = atof(rate);
   
-  if(intervalRatio <= 1.0f - volatilityThreshold )
+  //Print Output
+  lcd.print("Current:");
+  lcd.print(currentNumericRate);
+
+  
+  //Begin Processing
+  if(lastNumericRate == 0)
+    lastNumericRate = currentNumericRate;
+    
+  if(accumulator == 0)
+    accumulator = currentNumericRate;
+
+  //Begin calculation of moving average http://stackoverflow.com/questions/10990618/calculate-rolling-moving-average-in-c-or-c
+  accumulator = (alpha * currentNumericRate) + (1.0 - alpha) * accumulator;
+  
+  volatilityIndex = ((float)currentNumericRate / accumulator) - 1;
+  
+  lcd.setCursor(0,1);
+  lcd.print("A:");
+  lcd.print(accumulator);
+  
+  //Begin alert processing
+  lcd.print(" ");
+  lcd.print(volatilityIndex);
+  lcd.print("%");
+    
+  if(volatilityIndex <=  (volatilityAlertThreshold * -1)) //falling knife
     playNote('d', 5000);
-  else if (intervalRatio >= 1.0f + volatilityThreshold )
+  else if (volatilityIndex >= volatilityAlertThreshold)  //to the moon
     playNote('c', 5000);
+
   
-  lastIntervalRateSampleTime = currentTime;
-  lastIntervalRateSample = currentNumericRate;
-}
-
-//Begin consecutive trend anaylysis
-if(lastNumericRate > currentNumericRate)
-  lcd.setRGB(255,0,0);
-else if(lastNumericRate < currentNumericRate)
-  lcd.setRGB(0,255,0);
-
-lastNumericRate = currentNumericRate;
-
-//Poll every 15s
-delay(15000);
+  
+  //Begin consecutive trend anaylysis
+  if(lastNumericRate > currentNumericRate)
+    lcd.setRGB(255,0,0);
+  else if(lastNumericRate < currentNumericRate)
+    lcd.setRGB(0,255,0);
+  
+  lastNumericRate = currentNumericRate;
+  
+  //Poll every 15s
+  delay(15000);
 }
 
 char* parseJson(char *p)
