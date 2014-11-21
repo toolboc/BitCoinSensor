@@ -4,7 +4,7 @@
 An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cues pertaining to the volatility of the the CoinDesk exchange over a given time interval.
  
  Board:
- * Intel Edison
+ *Intel Edison
  
  Shield:
  *Grove Base Shield V2
@@ -98,6 +98,8 @@ if(lastNumericRate > currentNumericRate)
   lcd.setRGB(255,0,0);
 else if(lastNumericRate < currentNumericRate)
   lcd.setRGB(0,255,0);
+
+lastNumericRate = currentNumericRate;
 
 delay(10000);
 }
