@@ -1,7 +1,5 @@
 BitCoinSensor
 =============
-
-/*
 An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cues pertaining to the volatility of the the CoinDesk exchange over a given time interval.
  
  Board:
@@ -14,4 +12,3 @@ An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cue
  *Grove LCD RGB Backlight
  
  by Paul DeCarlo
- */
