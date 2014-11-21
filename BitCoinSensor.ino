@@ -4,7 +4,7 @@
 An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cues pertaining to the volatility of the the CoinDesk exchange over a given time interval.
  
  Board:
- *Intel Edison
+ * Intel Edison
  
  Shield:
  *Grove Base Shield V2
@@ -22,6 +22,7 @@ An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cue
 #include "rgb_lcd.h"
 
 rgb_lcd lcd;
+int speakerPin = 3;                  // Grove Buzzer connect to D3
 
 char ssid[] = "YOURNETWORK"; //  your network SSID (name) 
 char pass[] = "YOURPASSWORD";    // your network password (use for WPA, or use as key for WEP)
@@ -30,8 +31,8 @@ int keyIndex = 0;            // your network key Index number (needed only for W
 int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
-//IPAddress server(74,125,232,128);  // numeric IP for Google (no DNS)
-char server[] = "api.coindesk.com";    // name address for Google (using DNS)
+//IPAddress server(204,79,197,200);  // numeric IP for Bing (no DNS)
+char server[] = "api.coindesk.com";   
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server 
@@ -43,6 +44,8 @@ void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   
+  pinMode(speakerPin, OUTPUT);
+
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     lcd.println("WiFi shield not present"); 
@@ -74,26 +77,57 @@ void setup() {
 }
 
 float lastNumericRate = 0;
+float lastIntervalRateSample = 0;
+float lastIntervalRateSampleTime = 0;
+float currentTime = 0;
+int intervalInSeconds = 600;
+float volatilityThreshold = .10;
+float intervalRatio = 1;
 
 void loop() {
 
 lcd.clear();  
   
+//Get BTC Price  
 char* result = makeWebRequest();
 
-//char* dateBegin = strstr(result, "\"updated\"");
-//char* date = parseJson(dateBegin);
-//lcd.print(date);
-
+//Begin Parsing
 char* rateBegin = strstr(result, "\"rate\"");
 char* rate = parseJson(rateBegin);
 float currentNumericRate = atof(rate);
 
+//Print Output
 lcd.print(currentNumericRate);
+lcd.print(" ");
+lcd.print(intervalRatio - 1.0f);
+lcd.print("%");
 
+//Begin Processing
 if(lastNumericRate == 0)
   lastNumericRate = currentNumericRate;
 
+if(lastIntervalRateSample == 0)
+{
+    lastIntervalRateSample = currentNumericRate;
+    lastIntervalRateSampleTime = time(0);
+}
+
+//Begin Crash || "To the Moon" detection  
+currentTime = time(0);
+if(currentTime > lastIntervalRateSampleTime + intervalInSeconds)
+{
+  intervalRatio = (float)lastIntervalRateSample / currentNumericRate;
+  
+  if(intervalRatio <= 1.0f - volatilityThreshold )
+    playNote('d', 5000);
+  else if (intervalRatio >= 1.0f + volatilityThreshold )
+    playNote('c', 5000);
+  
+  lastIntervalRateSampleTime = currentTime;
+  lastIntervalRateSample = currentNumericRate;
+}
+
+//Begin consecutive trend anaylysis
 if(lastNumericRate > currentNumericRate)
   lcd.setRGB(255,0,0);
 else if(lastNumericRate < currentNumericRate)
@@ -101,7 +135,8 @@ else if(lastNumericRate < currentNumericRate)
 
 lastNumericRate = currentNumericRate;
 
-delay(10000);
+//Poll every 15s
+delay(15000);
 }
 
 char* parseJson(char *p)
@@ -154,6 +189,27 @@ char* makeWebRequest(){
    }  
 
   return result;
+}
+
+void playTone(int tone, int duration) {
+    for (long i = 0; i < duration * 1000L; i += tone * 2) {
+        digitalWrite(speakerPin, HIGH);
+        delayMicroseconds(tone);
+        digitalWrite(speakerPin, LOW);
+        delayMicroseconds(tone);
+    }
+}
+
+void playNote(char note, int duration) {
+    char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+    int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+
+    // play the tone corresponding to the note name
+    for (int i = 0; i < 8; i++) {
+        if (names[i] == note) {
+            playTone(tones[i], duration);
+        }
+    }
 }
 
 void printWifiStatus() {
