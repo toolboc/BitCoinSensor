@@ -10,4 +10,4 @@ Sensors: Grove LCD RGB Backlight, Grove Buzzer
 
 by Paul DeCarlo
 
-![ScreenShot](http://zippy.gfycat.com/BlondExemplaryKoala.gif)
+![ScreenShot](http://giant.gfycat.com/BlondExemplaryKoala.gif)
