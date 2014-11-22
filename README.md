@@ -1,16 +1,13 @@
 BitCoinSensor
 =============
-An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cues pertaining to the volatility of the the CoinDesk exchange over a given time interval.
+An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cues pertaining to the volatility of the the CoinDesk exchange over time.
  
-Board:
-*Intel Edison
+Board: Intel Edison
  
-Shield:
-*Grove Base Shield V2
+Shield: Grove Base Shield V2
  
-Sensors:
-*Grove LCD RGB Backlight
+Sensors: Grove LCD RGB Backlight, Grove Buzzer
 
 by Paul DeCarlo
 
-![ScreenShot](http://i.imgur.com/V9DMDcH.jpg)
+![ScreenShot](http://zippy.gfycat.com/BlondExemplaryKoala.gif)
