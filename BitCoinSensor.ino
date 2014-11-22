@@ -83,7 +83,7 @@ float accumulator = 0;
 float alpha = .15;
 float volatilityIndex = 0;
 //defined as ratio of Moving average (accumulator) / currentNumericRate
-float volatilityAlertThreshold = 7;
+float volatilityAlertThreshold = .05;
 
 void loop() {
 
@@ -112,7 +112,7 @@ void loop() {
   //Begin calculation of moving average http://stackoverflow.com/questions/10990618/calculate-rolling-moving-average-in-c-or-c
   accumulator = (alpha * currentNumericRate) + (1.0 - alpha) * accumulator;
   
-  volatilityIndex = ((float)currentNumericRate / accumulator);
+  volatilityIndex = ((float)currentNumericRate / accumulator) - 1;
   
   lcd.setCursor(0,1);
   lcd.print("A:");
@@ -120,7 +120,7 @@ void loop() {
   
   //Begin alert processing
   lcd.print(" ");
-  lcd.print(volatilityIndex);
+  lcd.print(volatilityIndex * 100);
   lcd.print("%");
     
   if(volatilityIndex <=  (volatilityAlertThreshold * -1)) //falling knife
