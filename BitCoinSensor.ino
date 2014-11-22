@@ -80,10 +80,10 @@ float currentNumericRate = 0;
 float lastNumericRate = 0;
 float accumulator = 0;
 //The closer alpha is to 1.0, the faster the moving average updates in response to new values
-float alpha = .2;
+float alpha = .15;
 float volatilityIndex = 0;
 //defined as ratio of Moving average (accumulator) / currentNumericRate
-float volatilityAlertThreshold = .10;
+float volatilityAlertThreshold = 7;
 
 void loop() {
 
@@ -101,7 +101,6 @@ void loop() {
   //Print Output
   lcd.print("Current:");
   lcd.print(currentNumericRate);
-
   
   //Begin Processing
   if(lastNumericRate == 0)
@@ -113,7 +112,7 @@ void loop() {
   //Begin calculation of moving average http://stackoverflow.com/questions/10990618/calculate-rolling-moving-average-in-c-or-c
   accumulator = (alpha * currentNumericRate) + (1.0 - alpha) * accumulator;
   
-  volatilityIndex = ((float)currentNumericRate / accumulator) - 1;
+  volatilityIndex = ((float)currentNumericRate / accumulator);
   
   lcd.setCursor(0,1);
   lcd.print("A:");
@@ -128,19 +127,17 @@ void loop() {
     playNote('d', 5000);
   else if (volatilityIndex >= volatilityAlertThreshold)  //to the moon
     playNote('c', 5000);
-
-  
   
   //Begin consecutive trend anaylysis
   if(lastNumericRate > currentNumericRate)
-    lcd.setRGB(255,0,0);
+    lcd.setRGB(100,0,0);
   else if(lastNumericRate < currentNumericRate)
-    lcd.setRGB(0,255,0);
+    lcd.setRGB(0,100,0);
   
   lastNumericRate = currentNumericRate;
   
-  //Poll every 15s
-  delay(15000);
+  //Poll every 30s
+  delay(30000);
 }
 
 char* parseJson(char *p)
