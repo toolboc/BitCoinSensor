@@ -82,7 +82,7 @@ float accumulator = 0;
 //The closer alpha is to 1.0, the faster the moving average updates in response to new values
 float alpha = .15;
 float volatilityIndex = 0;
-//defined as ratio of Moving average (accumulator) / currentNumericRate
+//defined as ratio of currentNumericRate / Moving average (accumulator)
 float volatilityAlertThreshold = .05;
 
 void loop() {
