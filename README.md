@@ -9,14 +9,20 @@ Volatility is a measure of how much the price of a financial asset varies over t
 
 The Volatility Index is computed using the exponential moving average formula:
 
-accumulator = (alpha * currentNumericRate) + (1.0 - alpha) * accumulator
+`accumulator = (alpha * currentNumericRate) + (1.0 - alpha) * accumulator`
 
-volatilityIndex = (currentNumericRate / accumulator) - 1
+`volatilityIndex = (currentNumericRate / accumulator) - 1`
 
 Note that the volatilityIndex is directional, thus if it is negative the volatility is moving the price downward and vice versa if positive.  
 
-
 The idea behind this project is to alert a potential investor of breakneck swings in the price of BTC.  This could be very important given that the BTC exchange is open 24/7.  Thus, a savvy investor could potentially save themselves from a heavy loss if they were alerted to say a 5% negative volatilityIndex swing that were to occur while the investor is sleeping.  Likewise, one could be alerted of a peak selling opportunity should the volatilityIndex report a rise.  
+
+Components List
+===============
+* Grove LCD RGB Backlight x 1  
+* Grove Buzzer x 1  
+* Intel Edison with Arduino Breakout Kit x 1  
+* Grove Base Shield V2 x 1 
 
 Schematic
 ========
