@@ -17,6 +17,8 @@ Note that the volatilityIndex is directional, thus if it is negative the volatil
 
 The idea behind this project is to alert a potential investor of breakneck swings in the price of BTC.  This could be very important given that the BTC exchange is open 24/7.  Thus, a savvy investor could potentially save themselves from a heavy loss if they were alerted to say a 5% negative volatilityIndex swing that were to occur while the investor is sleeping.  Likewise, one could be alerted of a peak selling opportunity should the volatilityIndex report a rise.  
 
+*Fun Fact* - While attending a Microsoft Corporate Hackathon in Miami, I was awoken by the BitCoinSensor following the announcement of Microsoft accepting BitCoin! - https://www.cryptocoinsnews.com/microsoft-now-accepts-bitcoin-bitpay/
+
 Components List
 ===============
 * Grove LCD RGB Backlight x 1  
