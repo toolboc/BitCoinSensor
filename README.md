@@ -26,9 +26,13 @@ Components List
 * Intel Edison with Arduino Breakout Kit x 1  
 * Grove Base Shield V2 x 1 
 
-Schematic
-========
+Schematic for Intel Edison
+==========================
 ![ScreeenShot](http://i.imgur.com/IEt8H17.png)
+
+Schematic for LinkIt One
+========================
+![ScreeenShot](http://i.imgur.com/2QD9O9c.jpg)
 
 In-Action
 =========
