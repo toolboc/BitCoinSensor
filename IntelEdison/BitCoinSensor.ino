@@ -7,10 +7,10 @@ An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cue
  * Intel Edison
  
  Shield:
- *Grove Base Shield V2
+ * Grove Base Shield V2
  
  Sensors:
- *Grove LCD RGB Backlight
+ * Grove LCD RGB Backlight
  
  by Paul DeCarlo
  */
@@ -22,11 +22,20 @@ An IoT solution for monitoring the price of Bitcoin with Visual and Auditory cue
 #include "rgb_lcd.h"
 
 rgb_lcd lcd;
-int speakerPin = 3;                  // Grove Buzzer connect to D3
+int speakerPin = 3;  // Grove Buzzer connect to D3
 
 char ssid[] = "YOURNETWORK"; //  your network SSID (name) 
 char pass[] = "YOURPASSWORD";    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
+
+float currentNumericRate = 0;
+float lastNumericRate = 0;
+float accumulator = 0;
+//The closer alpha is to 1.0, the faster the moving average updates in response to new values
+float alpha = .15;
+float volatilityIndex = 0;
+//Defined as ratio of currentNumericRate / Moving average (accumulator)
+float volatilityAlertThreshold = .01; //Price of BTC is moving at a full percent away from Moving average (accumulator) in consecutive polls, indicates HIGH volatility
 
 int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
@@ -75,15 +84,6 @@ void setup() {
   //printWifiStatus();
  
 }
-
-float currentNumericRate = 0;
-float lastNumericRate = 0;
-float accumulator = 0;
-//The closer alpha is to 1.0, the faster the moving average updates in response to new values
-float alpha = .15;
-float volatilityIndex = 0;
-//Defined as ratio of currentNumericRate / Moving average (accumulator)
-float volatilityAlertThreshold = .01; //Price of BTC is moving at a full percent away from Moving average (accumulator) in consecutive polls, indicates HIGH volatility
 
 void loop() {
 
